@@ -8,6 +8,7 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False)
     phone = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
+    
     tests = db.relationship("Test", back_populates="users")
 
     def __init__(self, first_name, surname, last_name, email, password, phone) -> None:

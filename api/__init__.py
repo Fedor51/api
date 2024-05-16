@@ -16,10 +16,8 @@ def login():
     password = response["password"]
     user = User.query.filter_by(email=email).first_or_404()
     if user.password == password:
-        print("1")
-        return "1"
-    print("0")
-    return "0"
+        print("Login went successfully") ; return "1"
+    print("Login went wrong, email or password is invalid") ;  return "0"
 
 @app.route("/get_problem/<int:complexity>", methods=["GET"])
 def get_problem(complexity):
@@ -37,11 +35,13 @@ def get_user(id):
 
     data = {
         "id": id, 
-        "name": user.name,
-        "email": user.email,
+        "first_name": user.first_name,
+        "surname": user.surname,
+        "last_name": user.last_name,
+        "email": user.email, 
         "password": user.password,
         "phone": user.phone,
-        "tests": [{"id": t.id, "count": t.count, "time": t.time, "user_id": t.user_id,"correct": t.correct} for t in tests]
+        "tests": [{"id": t.id, "date": t.date, "user_id": t.user_id} for t in tests]
     }
 
     return jsonify(data)
@@ -51,7 +51,7 @@ def get_test(user_id):
     tests = Test.query.filter_by(user_id=user_id).all()
 
     data = {
-       "tests": [{"id": t.id, "count": t.count, "time": t.time, "user_id": t.user_id, "correct": t.correct} for t in tests]
+       "tests": [{"id": t.id, "date": t.date, "user_id": t.user_id} for t in tests]
     }
     return jsonify(data)
 
@@ -60,11 +60,13 @@ def get_all_users():
     users = User.query.all()
     data = [{
         "id": user.id,
-        "name": user.name, 
+        "first_name": user.first_name, 
+        "surname": user.surname, 
+        "last_name": user.last_name, 
         "email": user.email, 
         "password": user.password, 
         "phone": user.phone,
-        "tests": [{"id": t.id, "count": t.count, "time": t.time, "user_id": t.user_id, "correct": t.correct} for t in Test.query.filter_by(user_id=user.id).all()]
+        "tests": [{"id": t.id, "date": t.date, "user_id": t.user_id} for t in Test.query.filter_by(user_id=user.id).all()]
         } for user in users ]
     return jsonify(data)
 
@@ -83,9 +85,8 @@ def get_all_tests():
 
 @app.route("/add_user", methods=["GET", "POST"])
 def add_user():
-
     data = request.json
-    user = User(data["name"], data["email"], data["phone"], data["password"])
+    user = User(data["first_name"], data["surname"], data["last_name"], data["email"], data["password"], data["phone"])
 
     print(data)
 
@@ -98,7 +99,7 @@ def add_user():
 def add_test():
     
     data = request.json
-    test = Test(data["count"], data["time"], data["user_id"], data["correct"])
+    test = Test(data["date"], data["user_id"])
 
     print(data, test)
 
@@ -153,7 +154,6 @@ def get_stats(id):
     }
     return jsonify(data)
 
-
 # rating 
 @app.route("/get/rating", methods=['GET'])
 def get_rating():
@@ -170,4 +170,4 @@ def get_rating():
     pass
 
 
-# 0**0 = 1  python logic!!!
+# 0^0 = 1  python logic!!!

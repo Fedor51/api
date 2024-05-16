@@ -1,5 +1,3 @@
-## send data on main application(http://127.0.0.1:5001/add_user)
-
 import requests
 
 url = "http://127.0.0.1:5001/login"
